@@ -9,13 +9,16 @@ import (
 )
 
 type Address struct {
-	Cep         string `json:"cep,omitempty"`
-	Logradouro  string `json:"logradouro,omitempty"`
-	Complemento string `json:"complemento,omitempty"`
-	Bairro      string `json:"bairro,omitempty"`
-	Localidade  string `json:"localidade,omitempty"`
-	Uf          string `json:"uf,omitempty"`
-	Source      string `json:"-"`
+	Cep          string `json:"cep"`
+	Logradouro   string `json:"logradouro,omitempty"`
+	Bairro       string `json:"bairro,omitempty"`
+	Localidade   string `json:"localidade,omitempty"`
+	Uf           string `json:"uf,omitempty"`
+	Street       string `json:"street,omitempty"`
+	Neighborhood string `json:"neighborhood,omitempty"`
+	State        string `json:"state,omitempty"`
+	City         string `json:"city,omitempty"`
+	Source       string `json:"-"`
 }
 
 func fetchFromBrasilAPI(ctx context.Context, cep string, ch chan<- Address) {
@@ -62,7 +65,8 @@ func main() {
 
 	select {
 	case address := <-ch:
-		fmt.Printf("Fastest response from %s: %+v\n", address.Source, address)
+		json, _ := json.Marshal(address)
+		fmt.Printf("Fastest response from %s: %+v\n", address.Source, string(json))
 	case <-ctx.Done():
 		fmt.Println("Timeout error: No response within 1 second.")
 	}
